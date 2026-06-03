@@ -1,0 +1,6 @@
+{
+  "name": "Writing Showcase",
+  "description": "A minimalist, dark mode aesthetic showcase for personal writings and poetry with admin management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
