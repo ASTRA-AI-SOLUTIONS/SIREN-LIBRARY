@@ -37,6 +37,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     musicEmbedCode: "",
   });
 
+  const [localSettings, setLocalSettings] = useState(settings);
+
+  // Sync when props change, but only if we're not aggressively typing or we can just initialize it once.
+  React.useEffect(() => {
+    setLocalSettings(settings);
+  }, [settings]);
+
   const handleEdit = (w: Writing) => {
     setEditingId(w.id);
     setFormData({
@@ -182,9 +189,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 </label>
                 <input
                   className="w-full bg-[#0a0a0a] border border-white/10 rounded-none px-3 py-2 text-sm text-white focus:outline-none font-serif"
-                  value={settings.siteTitle}
+                  value={localSettings.siteTitle}
                   onChange={(e) =>
-                    onUpdateSettings({ siteTitle: e.target.value })
+                    setLocalSettings({ ...localSettings, siteTitle: e.target.value })
                   }
                 />
               </div>
@@ -195,13 +202,20 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 <textarea
                   rows={2}
                   className="w-full bg-[#0a0a0a] border border-white/10 rounded-none px-3 py-2 text-xs font-mono text-white/60 focus:outline-none resize-none"
-                  value={settings.musicEmbedCode}
+                  value={localSettings.musicEmbedCode}
                   onChange={(e) =>
-                    onUpdateSettings({ musicEmbedCode: e.target.value })
+                    setLocalSettings({ ...localSettings, musicEmbedCode: e.target.value })
                   }
                   placeholder="https://www.youtube.com/watch?v=..."
                 />
               </div>
+              <button
+                type="button"
+                onClick={() => onUpdateSettings(localSettings)}
+                className="w-full bg-white/10 hover:bg-white text-white hover:text-black transition-colors font-serif uppercase tracking-widest text-xs py-3 border border-white/10"
+              >
+                Save Settings
+              </button>
             </div>
           </div>
 

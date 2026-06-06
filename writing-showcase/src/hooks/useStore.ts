@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Writing, SiteSettings } from "../types";
 import { initialWritings, initialSettings } from "../data";
 import { db } from "../lib/firebase";
-import { collection, doc, onSnapshot, setDoc, updateDoc, deleteDoc, writeBatch } from "firebase/firestore";
+import { collection, doc, onSnapshot, setDoc, updateDoc, deleteDoc, writeBatch, addDoc } from "firebase/firestore";
 
 export const useStore = () => {
   const [writings, setWritings] = useState<Writing[]>([]);
@@ -75,6 +75,17 @@ export const useStore = () => {
     await updateDoc(doc(db, "settings", "main"), updates);
   };
 
+  const subscribeNewsletter = async (email: string) => {
+    try {
+      await addDoc(collection(db, "subscribers"), {
+        email,
+        subscribedAt: Date.now()
+      });
+    } catch (error) {
+      console.error("Error subscribing:", error);
+    }
+  };
+
   return {
     writings,
     settings,
@@ -84,5 +95,6 @@ export const useStore = () => {
     updateWriting,
     deleteWriting,
     updateSettings,
+    subscribeNewsletter,
   };
 };

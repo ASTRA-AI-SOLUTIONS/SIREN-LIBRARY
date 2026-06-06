@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Writing } from "../types";
 import { motion } from "motion/react";
 import { X, Type, Minus, Plus } from "lucide-react";
+import { useStore } from "../hooks/useStore";
 
 interface WritingViewProps {
   writing: Writing;
@@ -12,6 +13,7 @@ export const WritingView: React.FC<WritingViewProps> = ({
   writing,
   onClose,
 }) => {
+  const { subscribeNewsletter } = useStore();
   const [textSizeIndex, setTextSizeIndex] = useState(1);
 
   const textSizes = [
@@ -36,11 +38,15 @@ export const WritingView: React.FC<WritingViewProps> = ({
 
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [subscribing, setSubscribing] = useState(false);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
+    if (email && !subscribing) {
+      setSubscribing(true);
+      await subscribeNewsletter(email);
       setSubscribed(true);
+      setSubscribing(false);
       setEmail("");
     }
   };
@@ -170,9 +176,10 @@ export const WritingView: React.FC<WritingViewProps> = ({
               />
               <button
                 type="submit"
-                className="bg-white/10 border border-white/10 px-6 py-3 text-xs uppercase tracking-widest text-white hover:bg-white hover:text-black transition-colors font-sans rounded-none font-medium"
+                disabled={subscribing}
+                className="bg-white/10 border border-white/10 px-6 py-3 text-xs uppercase tracking-widest text-white hover:bg-white hover:text-black transition-colors font-sans rounded-none font-medium disabled:opacity-50"
               >
-                Inscribe
+                {subscribing ? "Wait..." : "Inscribe"}
               </button>
             </form>
           )}
