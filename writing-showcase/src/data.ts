@@ -420,5 +420,5 @@ It belongs to those who remain standing after disappointment.`,
 
 export const initialSettings: SiteSettings = {
   musicEmbedCode: `<iframe width="100%" height="166" src="https://www.youtube.com/embed/pLJ2_2BVNFk?autoplay=1&loop=1&playlist=pLJ2_2BVNFk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`,
-  siteTitle: "Siren",
+  siteTitle: "Sneha",
 };

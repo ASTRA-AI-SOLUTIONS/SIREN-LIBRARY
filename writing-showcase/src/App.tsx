@@ -31,7 +31,7 @@ export default function App() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (user === "admin" && pass === "Siren") {
+    if (user === "admin" && pass === "Sneha") {
       setIsAdminAuth(true);
       setLoginError(false);
     } else {
@@ -58,7 +58,7 @@ export default function App() {
             }}
             onClick={() => setHasEntered(true)}
           >
-            <h1 className="text-5xl md:text-6xl font-serif tracking-widest mb-8 z-10 text-center px-4 drop-shadow-2xl">Siren's Library</h1>
+            <h1 className="text-5xl md:text-6xl font-serif tracking-widest mb-8 z-10 text-center px-4 drop-shadow-2xl">Sneha's Library</h1>
             <p className="text-[10px] md:text-xs uppercase tracking-[0.3em] animate-pulse text-white/90 border border-white/20 px-8 py-3 z-10 backdrop-blur-sm bg-black/30">
               Click to Enter
             </p>
@@ -118,7 +118,7 @@ export default function App() {
                 className={`w-2 h-2 rounded-full ${isAdminAuth ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-neutral-700"}`}
               ></div>
               <span className="text-[10px] uppercase tracking-tighter text-white/40 font-mono">
-                Admin: {isAdminAuth ? "Siren" : "Locked"}
+                Admin: {isAdminAuth ? "Sneha" : "Locked"}
               </span>
             </div>
             <button

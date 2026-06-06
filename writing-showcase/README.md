@@ -1,4 +1,4 @@
-# Siren - Minimalist Writing Portfolio
+# Sneha - Minimalist Writing Portfolio
 
 A beautifully crafted, modern minimalist writing portfolio built with React, Vite, and Tailwind CSS. The app provides a canvas-like reading experience with atmospheric background images and embedded music for full immersion.
 
