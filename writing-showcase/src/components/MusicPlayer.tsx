@@ -7,10 +7,22 @@ interface MusicPlayerProps {
   isMuted?: boolean;
 }
 
+const getValidEmbedHtml = (input: string) => {
+  if (input.includes("<iframe")) return input;
+  const ytMatch = input.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+  if (ytMatch && ytMatch[1]) {
+    const videoId = ytMatch[1];
+    return `<iframe width="100%" height="166" src="https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+  }
+  return input;
+};
+
 export const MusicPlayer: React.FC<MusicPlayerProps> = ({ embedCode, isMuted = false }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   if (!embedCode) return null;
+
+  const finalHtml = getValidEmbedHtml(embedCode);
 
   return (
     <>
@@ -47,7 +59,7 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({ embedCode, isMuted = f
         {!isMuted ? (
           <div
             className="w-full opacity-80 hover:opacity-100 transition-opacity bg-black"
-            dangerouslySetInnerHTML={{ __html: embedCode }}
+            dangerouslySetInnerHTML={{ __html: finalHtml }}
           />
         ) : (
           <div className="w-full h-[166px] flex items-center justify-center bg-black text-white/30 text-[10px] uppercase tracking-widest border-t border-white/5">

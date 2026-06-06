@@ -133,10 +133,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
             </div>
             <div>
               <label className="block text-[10px] text-white/40 mb-2 uppercase tracking-widest flex items-center space-x-2">
-                <PlayCircle size={12} /> <span>Music Embed Code (Optional)</span>
+                <PlayCircle size={12} /> <span>YouTube Video Link (or Embed Code)</span>
               </label>
               <textarea
-                rows={3}
+                rows={2}
                 className="w-full bg-[#0c0c0c] border border-white/10 rounded-none px-4 py-3 focus:outline-none focus:border-white/30 font-mono text-xs text-white/60 resize-none"
                 value={formData.musicEmbedCode}
                 onChange={(e) =>
@@ -145,7 +145,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     musicEmbedCode: e.target.value,
                   })
                 }
-                placeholder="<iframe src='...' />"
+                placeholder="https://www.youtube.com/watch?v=..."
               />
             </div>
             <div className="flex gap-4 pt-4">
@@ -190,16 +190,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               </div>
               <div>
                 <label className="block text-[10px] text-white/40 mb-2 uppercase tracking-widest flex items-center space-x-2">
-                  <PlayCircle size={12} /> <span>Music Embed Code</span>
+                  <PlayCircle size={12} /> <span>YouTube Video Link (or Embed Code)</span>
                 </label>
                 <textarea
-                  rows={3}
+                  rows={2}
                   className="w-full bg-[#0a0a0a] border border-white/10 rounded-none px-3 py-2 text-xs font-mono text-white/60 focus:outline-none resize-none"
                   value={settings.musicEmbedCode}
                   onChange={(e) =>
                     onUpdateSettings({ musicEmbedCode: e.target.value })
                   }
-                  placeholder="<iframe src='...' />"
+                  placeholder="https://www.youtube.com/watch?v=..."
                 />
               </div>
             </div>

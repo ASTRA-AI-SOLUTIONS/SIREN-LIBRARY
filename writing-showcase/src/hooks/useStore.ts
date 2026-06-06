@@ -1,54 +1,78 @@
 import { useState, useEffect } from "react";
 import { Writing, SiteSettings } from "../types";
 import { initialWritings, initialSettings } from "../data";
+import { db } from "../lib/firebase";
+import { collection, doc, onSnapshot, setDoc, updateDoc, deleteDoc, writeBatch } from "firebase/firestore";
 
 export const useStore = () => {
-  const [writings, setWritings] = useState<Writing[]>(() => {
-    const saved = localStorage.getItem("writings_v9");
-    if (saved) return JSON.parse(saved);
-    return initialWritings;
-  });
-
-  const [settings, setSettings] = useState<SiteSettings>(() => {
-    const saved = localStorage.getItem("settings_v9");
-    if (saved) return JSON.parse(saved);
-    return initialSettings;
-  });
-
+  const [writings, setWritings] = useState<Writing[]>([]);
+  const [settings, setSettings] = useState<SiteSettings>(initialSettings);
   const [isAdminAuth, setIsAdminAuth] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
+  // Load and sync from Firestore
   useEffect(() => {
-    localStorage.setItem("writings_v9", JSON.stringify(writings));
-  }, [writings]);
+    const unsubWritings = onSnapshot(collection(db, "writings"), (snapshot) => {
+      if (snapshot.empty && !isInitialized) {
+        // Seed initial data if empty
+        const batch = writeBatch(db);
+        initialWritings.forEach(w => {
+          batch.set(doc(db, "writings", w.id), w);
+        });
+        batch.commit();
+      } else {
+        const data = snapshot.docs.map(d => d.data() as Writing);
+        // Sort by createdAt descending
+        data.sort((a, b) => b.createdAt - a.createdAt);
+        setWritings(data);
+      }
+      setIsInitialized(true);
+    }, (error) => {
+        console.error("Firestore read error (writings):", error);
+        setWritings(initialWritings);
+        setIsInitialized(true);
+    });
 
-  useEffect(() => {
-    localStorage.setItem("settings_v9", JSON.stringify(settings));
-  }, [settings]);
+    const unsubSettings = onSnapshot(doc(db, "settings", "main"), (docSnap) => {
+      if (!docSnap.exists()) {
+        setDoc(doc(db, "settings", "main"), initialSettings);
+      } else {
+        setSettings(docSnap.data() as SiteSettings);
+      }
+    }, (error) => {
+      console.error("Firestore read error (settings):", error);
+      setSettings(initialSettings);
+    });
 
-  const addWriting = (writing: Omit<Writing, "id" | "createdAt">) => {
+    return () => {
+      unsubWritings();
+      unsubSettings();
+    };
+  }, []);
+
+  const addWriting = async (writing: Omit<Writing, "id" | "createdAt">) => {
+    const newId = Date.now().toString();
     const newWriting: Writing = {
       ...writing,
-      id: Date.now().toString(),
+      id: newId,
       createdAt: Date.now(),
     };
-    setWritings((prev) => [newWriting, ...prev]);
+    await setDoc(doc(db, "writings", newId), newWriting);
   };
 
-  const updateWriting = (
+  const updateWriting = async (
     id: string,
     updates: Partial<Omit<Writing, "id" | "createdAt">>,
   ) => {
-    setWritings((prev) =>
-      prev.map((w) => (w.id === id ? { ...w, ...updates } : w)),
-    );
+    await updateDoc(doc(db, "writings", id), updates);
   };
 
-  const deleteWriting = (id: string) => {
-    setWritings((prev) => prev.filter((w) => w.id !== id));
+  const deleteWriting = async (id: string) => {
+    await deleteDoc(doc(db, "writings", id));
   };
 
-  const updateSettings = (updates: Partial<SiteSettings>) => {
-    setSettings((prev) => ({ ...prev, ...updates }));
+  const updateSettings = async (updates: Partial<SiteSettings>) => {
+    await updateDoc(doc(db, "settings", "main"), updates);
   };
 
   return {

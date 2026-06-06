@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { useStore } from "./hooks/useStore";
 import { HomeView } from "./components/HomeView";
 import { WritingView } from "./components/WritingView";
@@ -23,6 +23,7 @@ export default function App() {
   const [view, setView] = useState<ViewState>("home");
   const [activeWriting, setActiveWriting] = useState<Writing | null>(null);
   const [isMuted, setIsMuted] = useState(false);
+  const [hasEntered, setHasEntered] = useState(false);
 
   const [user, setUser] = useState("");
   const [pass, setPass] = useState("");
@@ -44,8 +45,29 @@ export default function App() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#0a0a0a] text-[#d1d1d1] font-sans flex flex-col md:flex-row overflow-hidden relative">
-      {/* Sidebar Navigation */}
+    <>
+      <AnimatePresence>
+        {!hasEntered && (
+          <motion.div
+            key="entry"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 1 } }}
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center text-white cursor-pointer bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: "linear-gradient(to bottom, rgba(10,10,10,0.5), rgba(10,10,10,0.9)), url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=2000&auto=format&fit=crop')"
+            }}
+            onClick={() => setHasEntered(true)}
+          >
+            <h1 className="text-5xl md:text-6xl font-serif tracking-widest mb-8 z-10 text-center px-4 drop-shadow-2xl">Siren's Library</h1>
+            <p className="text-[10px] md:text-xs uppercase tracking-[0.3em] animate-pulse text-white/90 border border-white/20 px-8 py-3 z-10 backdrop-blur-sm bg-black/30">
+              Click to Enter
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="w-full min-h-screen bg-[#0a0a0a] text-[#d1d1d1] font-sans flex flex-col md:flex-row overflow-hidden relative">
+        {/* Sidebar Navigation */}
       <aside className="w-full md:w-72 border-b md:border-b-0 md:border-r border-white/5 flex flex-col p-8 md:p-10 bg-[#0c0c0c] shrink-0 md:h-screen md:overflow-y-auto">
         <div
           className="mb-8 md:mb-12 cursor-pointer"
@@ -230,14 +252,17 @@ export default function App() {
         {isMuted ? <VolumeX size={14} strokeWidth={1} /> : <Volume2 size={14} strokeWidth={1} />}
       </button>
 
-      <MusicPlayer 
-        isMuted={isMuted}
-        embedCode={
-          (view === "writing" && activeWriting?.musicEmbedCode) 
-            ? activeWriting.musicEmbedCode 
-            : settings.musicEmbedCode
-        } 
-      />
+      {hasEntered && (
+        <MusicPlayer 
+          isMuted={isMuted}
+          embedCode={
+            (view === "writing" && activeWriting?.musicEmbedCode) 
+              ? activeWriting.musicEmbedCode 
+              : settings.musicEmbedCode
+          } 
+        />
+      )}
     </div>
+    </>
   );
 }
